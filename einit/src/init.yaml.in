@@ -1,0 +1,32 @@
+entities:
+
+- name: mosquitto.Publisher
+  env:
+    VFS_FILESYSTEM_BACKEND: client:@ROOTFS_ENTITY@
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+    MQTT_BROKER_ADDRESS: "@MQTT_BROKER_ADDRESS@"
+    MQTT_BROKER_PORT: "@MQTT_BROKER_PORT@"
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+  - target: @ROOTFS_ENTITY@
+    id: @ROOTFS_ENTITY@
+@INIT_Publisher_ENTITY_CONNECTIONS+@
+
+- name: kl.Ntpd
+  env:
+    VFS_FILESYSTEM_BACKEND: client:@ROOTFS_ENTITY@
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  args:
+    - "-4"
+    - -c
+    - /etc/ntp.conf
+  path: ntpd
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+  - target: @ROOTFS_ENTITY@
+    id: @ROOTFS_ENTITY@
+@INIT_Ntpd_ENTITY_CONNECTIONS+@
+
+@INIT_EXTERNAL_ENTITIES@
